@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle, Code, Zap } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckCircle, XCircle, AlertTriangle, Code, Zap, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SchemaResult {
@@ -18,15 +20,19 @@ interface SchemaResult {
 
 export const SchemaAnalyzer = () => {
   const [code, setCode] = useState("");
+  const [url, setUrl] = useState("");
+  const [activeTab, setActiveTab] = useState("code");
   const [results, setResults] = useState<SchemaResult[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
 
   const analyzeSchema = async () => {
-    if (!code.trim()) {
+    const inputEmpty = activeTab === "code" ? !code.trim() : !url.trim();
+    
+    if (inputEmpty) {
       toast({
-        title: "No code provided",
-        description: "Please enter some HTML code to analyze",
+        title: activeTab === "code" ? "No code provided" : "No URL provided",
+        description: activeTab === "code" ? "Please enter some HTML code to analyze" : "Please enter a website URL to analyze",
         variant: "destructive",
       });
       return;
@@ -107,7 +113,7 @@ export const SchemaAnalyzer = () => {
               Live Schema Analyzer
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Paste your HTML code below and get instant validation results with actionable optimization recommendations.
+              Analyze schema markup by pasting HTML code or entering a website URL to get instant validation results with actionable optimization recommendations.
             </p>
           </div>
 
@@ -117,15 +123,28 @@ export const SchemaAnalyzer = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Code className="w-5 h-5" />
-                  HTML Code Input
+                  Schema Analysis Input
                 </CardTitle>
                 <CardDescription>
-                  Paste your HTML code containing schema markup here
+                  Choose how you want to analyze schema markup
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Textarea
-                  placeholder={`<script type="application/ld+json">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="code" className="flex items-center gap-2">
+                      <Code className="w-4 h-4" />
+                      HTML Code
+                    </TabsTrigger>
+                    <TabsTrigger value="url" className="flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      Website URL
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="code" className="space-y-4">
+                    <Textarea
+                      placeholder={`<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -133,10 +152,35 @@ export const SchemaAnalyzer = () => {
   "url": "https://example.com"
 }
 </script>`}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="min-h-[300px] font-mono text-sm"
-                />
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      className="min-h-[300px] font-mono text-sm"
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="url" className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="website-url" className="text-sm font-medium">
+                        Website URL
+                      </label>
+                      <Input
+                        id="website-url"
+                        type="url"
+                        placeholder="https://example.com"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        className="min-h-[50px]"
+                      />
+                    </div>
+                    <div className="bg-muted/50 p-4 rounded-lg min-h-[240px] flex items-center justify-center">
+                      <div className="text-center text-muted-foreground">
+                        <Globe className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>Enter a website URL above to analyze its schema markup</p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+                
                 <Button 
                   onClick={analyzeSchema} 
                   disabled={isAnalyzing}
