@@ -8,7 +8,7 @@ export const Header = () => {
           <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary-glow rounded-lg flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">S</span>
           </div>
-          <span className="text-xl font-bold text-foreground">SchemaBoost</span>
+          <span className="text-xl font-bold text-foreground">Caspit</span>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
