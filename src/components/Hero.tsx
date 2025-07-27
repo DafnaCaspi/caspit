@@ -24,8 +24,8 @@ export const Hero = () => {
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
-            Professional schema markup validation and optimization tool. 
-            Boost your SEO rankings with perfect structured data implementation.
+            Boost your SEO and GEO rankings with professional schema markup validation and optimization. 
+            Get perfect structured data implementation instantly.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">

@@ -12,10 +12,10 @@ export const Footer = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary-glow rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">S</span>
               </div>
-              <span className="text-xl font-bold">SchemaBoost</span>
+              <span className="text-xl font-bold">Caspit</span>
             </div>
             <p className="text-secondary-foreground/80 max-w-sm">
-              The most powerful schema markup validation and optimization platform for SEO professionals.
+              Boost your SEO and GEO rankings with the most powerful schema markup validation and optimization platform.
             </p>
             <div className="flex space-x-3">
               <Button variant="ghost" size="sm" className="text-secondary-foreground/60 hover:text-secondary-foreground">
@@ -69,7 +69,7 @@ export const Footer = () => {
 
         <div className="border-t border-secondary-foreground/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-secondary-foreground/60 text-sm">
-            © 2024 SchemaBoost. All rights reserved.
+            © 2024 Caspit. All rights reserved.
           </p>
           <p className="text-secondary-foreground/60 text-sm">
             Built with ❤️ for SEO professionals
