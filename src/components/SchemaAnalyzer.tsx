@@ -16,6 +16,13 @@ interface SchemaResult {
     message: string;
   }>;
   recommendations: string[];
+  suggestedSchema?: string;
+}
+
+interface SchemaSuggestion {
+  name: string;
+  description: string;
+  code: string;
 }
 
 export const SchemaAnalyzer = () => {
@@ -23,6 +30,7 @@ export const SchemaAnalyzer = () => {
   const [url, setUrl] = useState("");
   const [activeTab, setActiveTab] = useState("code");
   const [results, setResults] = useState<SchemaResult[]>([]);
+  const [suggestions, setSuggestions] = useState<SchemaSuggestion[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
 
@@ -55,7 +63,26 @@ export const SchemaAnalyzer = () => {
         recommendations: [
           'Add telephone number for local business optimization',
           'Include social media profile URLs in "sameAs" array'
-        ]
+        ],
+        suggestedSchema: `{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Your Business Name",
+  "url": "https://yourbusiness.com",
+  "telephone": "+1-555-123-4567",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "123 Business St",
+    "addressLocality": "City",
+    "addressRegion": "State",
+    "postalCode": "12345",
+    "addressCountry": "US"
+  },
+  "sameAs": [
+    "https://facebook.com/yourbusiness",
+    "https://twitter.com/yourbusiness"
+  ]
+}`
       },
       {
         type: "Product",
@@ -69,16 +96,120 @@ export const SchemaAnalyzer = () => {
           'Add required "name" property to Product schema',
           'Format price as numeric value (e.g., "19.99")',
           'Include brand information for better product visibility'
-        ]
+        ],
+        suggestedSchema: `{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Product Name",
+  "brand": {
+    "@type": "Brand",
+    "name": "Brand Name"
+  },
+  "description": "Product description",
+  "offers": {
+    "@type": "Offer",
+    "price": "19.99",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  }
+}`
+      }
+    ];
+
+    // Mock schema suggestions
+    const mockSuggestions: SchemaSuggestion[] = [
+      {
+        name: "Article",
+        description: "For blog posts, news articles, and editorial content",
+        code: `{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Your Article Title",
+  "author": {
+    "@type": "Person",
+    "name": "Author Name"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2024-01-01",
+  "image": "https://example.com/image.jpg",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Publisher Name",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://example.com/logo.jpg"
+    }
+  }
+}`
+      },
+      {
+        name: "LocalBusiness",
+        description: "For local businesses with physical locations",
+        code: `{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Business Name",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "123 Main St",
+    "addressLocality": "City",
+    "addressRegion": "State",
+    "postalCode": "12345"
+  },
+  "telephone": "+1-555-123-4567",
+  "openingHours": "Mo-Fr 09:00-17:00",
+  "priceRange": "$$"
+}`
+      },
+      {
+        name: "FAQPage",
+        description: "For FAQ pages and question-answer content",
+        code: `{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is schema markup?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Schema markup is structured data that helps search engines understand your content better."
+      }
+    }
+  ]
+}`
+      },
+      {
+        name: "Review",
+        description: "For product reviews and ratings",
+        code: `{
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "Product",
+    "name": "Product Name"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Reviewer Name"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "5",
+    "bestRating": "5"
+  },
+  "reviewBody": "Great product, highly recommended!"
+}`
       }
     ];
     
     setResults(mockResults);
+    setSuggestions(mockSuggestions);
     setIsAnalyzing(false);
     
     toast({
       title: "Analysis complete",
-      description: `Found ${mockResults.length} schema types in your code`,
+      description: `Found ${mockResults.length} schema types and ${mockSuggestions.length} suggestions`,
     });
   };
 
@@ -117,7 +248,7 @@ export const SchemaAnalyzer = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
             {/* Input Section */}
             <Card>
               <CardHeader>
@@ -256,7 +387,18 @@ export const SchemaAnalyzer = () => {
                               ))}
                             </div>
                           </div>
-                        )}
+                         )}
+                         
+                         {result.suggestedSchema && (
+                           <div className="mt-4">
+                             <h4 className="text-sm font-medium mb-2">Optimized Schema Code:</h4>
+                             <div className="bg-muted rounded-lg p-3">
+                               <pre className="text-xs overflow-x-auto">
+                                 <code>{result.suggestedSchema}</code>
+                               </pre>
+                             </div>
+                           </div>
+                         )}
                       </div>
                     ))}
                   </div>
@@ -264,6 +406,53 @@ export const SchemaAnalyzer = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Schema Suggestions Section */}
+          {suggestions.length > 0 && (
+            <div className="mt-12">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-foreground mb-4">
+                  Recommended Schema Types
+                </h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Common schema types that can boost your SEO rankings. Copy and customize these templates for your content.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {suggestions.map((suggestion, index) => (
+                  <Card key={index} className="h-full">
+                    <CardHeader>
+                      <CardTitle className="text-lg">{suggestion.name}</CardTitle>
+                      <CardDescription>{suggestion.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="bg-muted rounded-lg p-4">
+                        <pre className="text-xs overflow-x-auto">
+                          <code>{suggestion.code}</code>
+                        </pre>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-3 w-full"
+                        onClick={() => {
+                          navigator.clipboard.writeText(`<script type="application/ld+json">\n${suggestion.code}\n</script>`);
+                          toast({
+                            title: "Copied to clipboard",
+                            description: `${suggestion.name} schema template copied with script tags`,
+                          });
+                        }}
+                      >
+                        <Code className="w-4 h-4 mr-2" />
+                        Copy Code
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
