@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle } from "lucide-react";
-import heroImage from "@/assets/hero-schema.jpg";
 
 export const Hero = () => {
   return (
@@ -51,16 +50,6 @@ export const Hero = () => {
               Instant results
             </div>
           </div>
-        </div>
-        
-        {/* Hero Image */}
-        <div className="relative max-w-5xl mx-auto">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary-glow/20 rounded-2xl blur-2xl transform scale-105"></div>
-          <img 
-            src={heroImage} 
-            alt="Schema markup validation dashboard" 
-            className="relative w-full rounded-2xl shadow-2xl border border-border/50"
-          />
         </div>
       </div>
     </section>
